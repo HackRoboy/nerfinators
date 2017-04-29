@@ -39,12 +39,12 @@ void loop() {
   int offset = 15;
   // forward
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  keepSpeed(stopPos - offset, 35);
+  keepSpeed(stopPos - offset, 27);
   myservo.detach();
   delay(1000);
   // back
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  keepSpeed(stopPos + offset, 35);
+  keepSpeed(stopPos + offset, 27);
   myservo.detach();
 
   // ACCELERATOR OFF
