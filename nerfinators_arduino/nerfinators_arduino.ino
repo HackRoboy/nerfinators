@@ -4,9 +4,9 @@ Servo myservo;  // create servo object to control a servo
 int ACCELERATOR_PIN = 12;
 
 void setup() {
- 
 
-  //Serial.begin(9600);
+
+  Serial.begin(9600);
   //while (!Serial) {
   //  ; // wait for serial port to connect. Needed for native USB port only
   //}
@@ -26,40 +26,53 @@ void keepSpeed(int speed, int steps) {
   }  
 }
 
+void turnLED(int val){
+    if(val > 0){
+      digitalWrite(LED_BUILTIN, HIGH);   // LED on
+    }
+    else{
+      digitalWrite(LED_BUILTIN, LOW);   // LED off
+    }
+    delay(100);
+}
+
+void blinkLED(){
+  turnLED(1);
+  turnLED(0);
+}
+
 void loop() {
 
   
+  if(Serial.available())
+    turnLED(Serial.parseInt());
+  else{
+    // ACCELERATOR ON
+    digitalWrite(ACCELERATOR_PIN, HIGH);   // on
+    delay(1000); // some delay
+    
+    // SERVO: RELOAD
+    int stopPos = 94;
+    int offset = 15;
+    // forward
+    myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+    keepSpeed(stopPos - offset, 35);
+    myservo.detach();
+    delay(1000);
+    // back
+    myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+    keepSpeed(stopPos + offset, 35);
+    myservo.detach();
   
-  // ACCELERATOR ON
-  digitalWrite(ACCELERATOR_PIN, HIGH);   // on
-  delay(1000); // some delay
+    // ACCELERATOR OFF
+    digitalWrite(ACCELERATOR_PIN, LOW);   // off
+    delay(1000); // some delay
   
-  // SERVO: RELOAD
-  int stopPos = 94;
-  int offset = 15;
-  // forward
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  keepSpeed(stopPos - offset, 27);
-  myservo.detach();
-  delay(1000);
-  // back
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  keepSpeed(stopPos + offset, 27);
-  myservo.detach();
-
-  // ACCELERATOR OFF
-  digitalWrite(ACCELERATOR_PIN, LOW);   // off
-  delay(1000); // some delay
-
-  // BLINK
-  for (int i = 0; i < 30; i++) {
-    digitalWrite(LED_BUILTIN, HIGH);   // LED on
-    delay(100);                       
-    digitalWrite(LED_BUILTIN, LOW);    //LED off 
-    delay(100); 
+    // BLINK
+    for (int i = 0; i < 30; i++) {
+      blinkLED();
+    }
   }
-  
-
   
 }
 
