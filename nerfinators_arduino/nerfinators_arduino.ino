@@ -60,26 +60,37 @@ void shootOnce() {
   delay(300);
 }
 
+void demo1(){
+   // ACCELERATOR ON
+   digitalWrite(ACCELERATOR_PIN, HIGH);   // on
+   delay(1000); // some delay
+
+   shootOnce();
+   shootOnce();
+   shootOnce();
+
+   // ACCELERATOR OFF
+   digitalWrite(ACCELERATOR_PIN, LOW);   // off
+   delay(1000); // some delay
+
+   // BLINK
+   for (int i = 0; i < 30; i++) {
+     blinkLED();
+   }
+}
+
 void loop() {
 
-  // usb port test
-  if(Serial.available())
-    turnLED(Serial.parseInt());
+  demo1();
 
-//  // ACCELERATOR ON
-//  digitalWrite(ACCELERATOR_PIN, HIGH);   // on
-//  delay(1000); // some delay
-//
-//  shootOnce();
-//  shootOnce();
-//  shootOnce();
-//
-//  // ACCELERATOR OFF
-//  digitalWrite(ACCELERATOR_PIN, LOW);   // off
-//  delay(1000); // some delay
-//
-//  // BLINK
-//  for (int i = 0; i < 30; i++) {
-//    blinkLED();
-//  }
+  if(Serial.available()){
+    turnLED(Serial.parseInt());
+    int op = Serial.parseInt();
+    if(op == 0||op == 1){ // LED off/on mesage
+      turnLED(op);
+    }
+    else if(op == 2){ // shoot message
+      shootOnce();
+    }
+  }
 }
