@@ -84,7 +84,6 @@ void loop() {
   demo1();
 
   if(Serial.available()){
-    turnLED(Serial.parseInt());
     int op = Serial.parseInt();
     if(op == 0||op == 1){ // LED off/on mesage
       turnLED(op);
