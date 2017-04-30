@@ -20,6 +20,7 @@ using System.IO;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Controls;
+using System.IO.Ports;
 
 namespace FaceTracking
 {
@@ -30,6 +31,7 @@ namespace FaceTracking
         private PXCMFaceData faceData;
         private Thread update;
         private string alertMsg;
+        private SerialPort serialPort;
 
         public MainWindow()
         {
@@ -87,6 +89,41 @@ namespace FaceTracking
             // Release resources
             faceConfig.Dispose();
             faceModule.Dispose();
+
+            // initialize serial ports
+            string[] ports = SerialPort.GetPortNames();
+            if (ports.Length > 0)
+            {
+
+                Console.WriteLine(">>>>>>>>>Found port " + ports[0]);
+                serialPort = new SerialPort(ports[0],9600);
+                Console.WriteLine(">>>>>>>>Serialport isopen" + serialPort.IsOpen);
+                Console.WriteLine(">>>>>>>Port Opened");
+                if (!serialPort.IsOpen)
+                {
+                    serialPort.Open();
+                    // test to open a serial port
+                    if (serialPort.IsOpen)
+                    {
+                        try
+                        {
+                            // serialPort.Open();
+                            serialPort.Write("1");
+                            Console.WriteLine(">>>>>>>Written to port");
+
+                        }
+                        catch
+                        {
+                            MessageBox.Show("There was an error. Please make sure that the correct port was selected, and the device, plugged in.");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine(">>>>>>No port");
+                serialPort = default(SerialPort);
+            }
         }
 
         private void FaceAlertHandler(PXCMFaceData.AlertData alert)
@@ -138,12 +175,20 @@ namespace FaceTracking
 
                             // Get average depth value of detected face
                             faceDetectionData.QueryFaceAverageDepth(out faceDepth);
+
+                            Console.WriteLine(">>>>>>>Face detected");
+                            
+                         
+
                         }
                     }
                 }
 
                 // Update UI
                 Render(colorBitmap, facesDetected, faceH, faceW, faceX, faceY, faceDepth);
+
+
+
 
                 // Release the color frame
                 colorBitmap.Dispose();
