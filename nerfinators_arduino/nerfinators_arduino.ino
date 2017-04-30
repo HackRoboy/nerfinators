@@ -13,7 +13,7 @@ void setup() {
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
-
+  digitalWrite(LED_BUILTIN, HIGH);
   // accelerator pin
   pinMode(ACCELERATOR_PIN, OUTPUT);      // sets the digital pin as output
 }
@@ -60,26 +60,53 @@ void shootOnce() {
   delay(300);
 }
 
+void shoot(int n){
+   // ACCELERATOR ON
+   digitalWrite(ACCELERATOR_PIN, HIGH);   // on
+   delay(1000); // some delay
+    for(int i=1; i<=n; ++i)
+      shootOnce();
+  digitalWrite(ACCELERATOR_PIN, LOW);   // off
+}
+
+void readSerial() {
+  String dataString = "";
+
+  while (Serial.available()) {
+    char dataChar = (char)Serial.read();
+    if (dataChar == '\n') {
+      int id = dataString.toInt();
+      Serial.println("data: " + String(id));
+      
+      switch(id){
+        case 0:
+          turnLED(id);
+        break;
+        case 1:
+          turnLED(id);
+        break;
+        case 2:
+          shoot(3);
+        break;
+      }
+      
+      return;
+    } else {
+      dataString += dataChar;
+    }
+  }
+}
+
+void demo1(){
+    shoot(3);
+   // BLINK
+   for (int i = 0; i < 30; i++) {
+     blinkLED();
+   }
+}
+
 void loop() {
 
-  // usb port test
-  if(Serial.available())
-    turnLED(Serial.parseInt());
-
-//  // ACCELERATOR ON
-//  digitalWrite(ACCELERATOR_PIN, HIGH);   // on
-//  delay(1000); // some delay
-//
-//  shootOnce();
-//  shootOnce();
-//  shootOnce();
-//
-//  // ACCELERATOR OFF
-//  digitalWrite(ACCELERATOR_PIN, LOW);   // off
-//  delay(1000); // some delay
-//
-//  // BLINK
-//  for (int i = 0; i < 30; i++) {
-//    blinkLED();
-//  }
+  demo1();
+  //readSerial();
 }
