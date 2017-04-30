@@ -10,7 +10,7 @@ void setup() {
   //while (!Serial) {
   //  ; // wait for serial port to connect. Needed for native USB port only
   //}
-  
+
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -23,17 +23,17 @@ void keepSpeed(int speed, int steps) {
   for (int s = 0; s < steps; s++) {
     myservo.write(speed);
     delay(10);
-  }  
+  }
 }
 
-void turnLED(int val){
+void turnLED(int val, int delay_time = 100){
     if(val > 0){
       digitalWrite(LED_BUILTIN, HIGH);   // LED on
     }
     else{
       digitalWrite(LED_BUILTIN, LOW);   // LED off
     }
-    delay(100);
+    delay(delay_time);
 }
 
 void blinkLED(){
@@ -41,39 +41,41 @@ void blinkLED(){
   turnLED(0);
 }
 
-void loop() {
+// make sure accelerator is running before calling this method
+void shootOnce() {
+  // SERVO: RELOAD
+  int stopPos = 94;
+  int offset = 15;
 
-  
-  if(Serial.available())
-    turnLED(Serial.parseInt());
-  else{
-    // ACCELERATOR ON
-    digitalWrite(ACCELERATOR_PIN, HIGH);   // on
-    delay(1000); // some delay
-    
-    // SERVO: RELOAD
-    int stopPos = 94;
-    int offset = 15;
-    // forward
-    myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-    keepSpeed(stopPos - offset, 35);
-    myservo.detach();
-    delay(1000);
-    // back
-    myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-    keepSpeed(stopPos + offset, 35);
-    myservo.detach();
-  
-    // ACCELERATOR OFF
-    digitalWrite(ACCELERATOR_PIN, LOW);   // off
-    delay(1000); // some delay
-  
-    // BLINK
-    for (int i = 0; i < 30; i++) {
-      blinkLED();
-    }
-  }
-  
+  // forward
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  keepSpeed(stopPos - offset, 50);
+  myservo.detach();
+  delay(300);
+
+  // back
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  keepSpeed(stopPos + offset, 50);
+  myservo.detach();
+  delay(300);
 }
 
+void loop() {
 
+  // ACCELERATOR ON
+  digitalWrite(ACCELERATOR_PIN, HIGH);   // on
+  delay(1000); // some delay
+
+  shootOnce();
+  shootOnce();
+  shootOnce();
+
+  // ACCELERATOR OFF
+  digitalWrite(ACCELERATOR_PIN, LOW);   // off
+  delay(1000); // some delay
+
+  // BLINK
+  for (int i = 0; i < 30; i++) {
+    blinkLED();
+  }
+}
