@@ -21,7 +21,6 @@ F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\bin\Debug\Face
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\bin\Debug\FaceTracking.pdb
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\bin\Debug\Newtonsoft.Json.dll
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\bin\Debug\Newtonsoft.Json.xml
-F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.csprojResolveAssemblyReference.cache
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\MainWindow.baml
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\MainWindow.g.cs
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\App.g.cs
