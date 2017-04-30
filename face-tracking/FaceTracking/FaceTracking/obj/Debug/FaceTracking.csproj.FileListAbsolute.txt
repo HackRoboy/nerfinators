@@ -28,3 +28,4 @@ F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\Face
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.g.resources
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.Properties.Resources.resources
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.csproj.GenerateResource.Cache
+F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.csprojResolveAssemblyReference.cache

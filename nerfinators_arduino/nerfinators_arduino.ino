@@ -66,20 +66,20 @@ void loop() {
   if(Serial.available())
     turnLED(Serial.parseInt());
 
-  // ACCELERATOR ON
-  digitalWrite(ACCELERATOR_PIN, HIGH);   // on
-  delay(1000); // some delay
-
-  shootOnce();
-  shootOnce();
-  shootOnce();
-
-  // ACCELERATOR OFF
-  digitalWrite(ACCELERATOR_PIN, LOW);   // off
-  delay(1000); // some delay
-
-  // BLINK
-  for (int i = 0; i < 30; i++) {
-    blinkLED();
-  }
+//  // ACCELERATOR ON
+//  digitalWrite(ACCELERATOR_PIN, HIGH);   // on
+//  delay(1000); // some delay
+//
+//  shootOnce();
+//  shootOnce();
+//  shootOnce();
+//
+//  // ACCELERATOR OFF
+//  digitalWrite(ACCELERATOR_PIN, LOW);   // off
+//  delay(1000); // some delay
+//
+//  // BLINK
+//  for (int i = 0; i < 30; i++) {
+//    blinkLED();
+//  }
 }

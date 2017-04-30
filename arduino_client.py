@@ -2,7 +2,8 @@ import serial
 import serial.tools.list_ports
 import sys
 
-arduino_ports = [p.device for p in serial.tools.list_ports.comports() if 'GENUINO' in p.description]
+
+arduino_ports = [p.device for p in serial.tools.list_ports.comports() ]
 
 if not arduino_ports:
 	raise IOError("No Arduino found")
@@ -15,5 +16,5 @@ ser = serial.Serial(arduino_ports[0])
 if len(sys.argv):
 	msg = sys.argv[1]
 	if msg == '1' or msg == '0':	
-		ser.write(msg)
+		ser.write(str.encode(msg))
 
