@@ -21,6 +21,11 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Controls;
 using System.IO.Ports;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
+using Rosbridge.Client;
+
 
 namespace FaceTracking
 {
@@ -32,17 +37,71 @@ namespace FaceTracking
         private Thread update;
         private string alertMsg;
         private SerialPort serialPort;
+        private int angleValue;
+        private string action; // 2 to SHOOT, 1 for LED_ON, 0 for LED_OFF
+        private MessageDispatcher md;
+        private Subscriber subscriber;
+        private Publisher publisher;
+
+        /**
+         * width of the color stream 
+        */
+        public static int cWidth = 640;
+
+        /**
+         * height of the color stream
+         */
+        public static int cHeight = 480;
+
+        /**
+         * vertical field of view of the realsense
+         */
+        public static double vfov = 43;
+
+        /**
+         * horizontal field of view of the realsense
+         */
+        public static double hfov = 70;
+
+
+        public Int32 faceH;
+        public Int32 faceW;
+        public Int32 faceX;
+        public Int32 faceY;
 
         public MainWindow()
         {
             InitializeComponent();
 
+            ConfigureROSBridge();
             // Start SenseManager and configure the face module
             ConfigureRealSense();
+            
 
             // Start the Update thread
             update = new Thread(new ThreadStart(Update));
             update.Start();
+        }
+
+        private async void ConfigureROSBridge()
+        {
+            // for Rosbridge
+
+            // Start the message dispatcher
+            md = new MessageDispatcher(new Rosbridge.Client.Socket(new Uri("ws://10.183.126.141:9090")), new MessageSerializerV2_0());
+            await md.StartAsync();
+
+
+            // Publish to a topic
+            publisher = new Publisher("/balloonPosition", "geometry_msgs/Point32", md);
+            await publisher.AdvertiseAsync();
+            await publisher.PublishAsync(new { x = 2.2, y = 5.5, z = 3.2 });
+            Console.Write(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sent message");
+
+            // Clean-up
+            //await subscriber.UnsubscribeAsync();
+            //await publisher.UnadvertiseAsync();
+            //await md.StopAsync();
         }
 
         private void ConfigureRealSense()
@@ -90,54 +149,124 @@ namespace FaceTracking
             faceConfig.Dispose();
             faceModule.Dispose();
 
-            // initialize serial ports
-            string[] ports = SerialPort.GetPortNames();
-            if (ports.Length > 0)
+            // For ports
+            try
             {
-
-                Console.WriteLine(">>>>>>>>>Found port " + ports[0]);
-                serialPort = new SerialPort(ports[0],9600);
-                Console.WriteLine(">>>>>>>>Serialport isopen" + serialPort.IsOpen);
-                Console.WriteLine(">>>>>>>Port Opened");
-                if (!serialPort.IsOpen)
+                // initialize serial ports
+                string[] ports = SerialPort.GetPortNames();
+                if (ports.Length > 0)
                 {
-                    serialPort.Open();
-                    // test to open a serial port
-                    if (serialPort.IsOpen)
-                    {
-                        try
-                        {
-                            // serialPort.Open();
-                            serialPort.Write("1");
-                            Console.WriteLine(">>>>>>>Written to port");
 
-                        }
-                        catch
-                        {
-                            MessageBox.Show("There was an error. Please make sure that the correct port was selected, and the device, plugged in.");
-                        }
+                    Console.WriteLine(">>>>>>>>>Found port " + ports[0]);
+                    serialPort = new SerialPort(ports[0], 9600);
+                    Console.WriteLine(">>>>>>>>Serialport isopen" + serialPort.IsOpen);
+                    Console.WriteLine(">>>>>>>Port Opened");
+                    if (!serialPort.IsOpen)
+                    {
+                        serialPort.Open();
+                        // test to open a serial port
+
+
+
                     }
                 }
-            }
-            else
+                else
+                {
+                    Console.WriteLine(">>>>>>No port");
+                    serialPort = default(SerialPort);
+                }
+            }catch
             {
-                Console.WriteLine(">>>>>>No port");
-                serialPort = default(SerialPort);
+                Console.Write("No port found");
             }
+
+
+          
+
         }
 
         private void FaceAlertHandler(PXCMFaceData.AlertData alert)
         {
             alertMsg = Convert.ToString(alert.label);
+
+            Console.Write(">>>>>>>>"+alertMsg);
+
+            if(alertMsg == "ALERT_NEW_FACE_DETECTED")
+            {
+                action = "2"; // shoot
+                writeToSerialPort(action);
+                sendROSCommand(action);
+                createAndSendUDP(action);
+
+            }
+
+        }
+
+        private async void sendROSCommand(string action)
+        {
+            // compute angle relative to target.
+            double width = (double)cWidth;
+            double height = (double)cHeight;
+            double faceWidth = (double)faceW;
+            double faceHeight = (double)faceH;
+
+            double azimuth = (hfov / 2) * (faceX + faceWidth / 2 - width / 2) / (width / 2);
+            double elevation = -(vfov / 2) * (faceY + faceHeight / 2 - height / 2) / (height / 2);
+
+            Console.WriteLine("Azimuth: " + azimuth);
+            Console.WriteLine("Elevation: " + elevation);
+
+            await publisher.AdvertiseAsync();
+            await publisher.PublishAsync(new { x = azimuth, y = elevation, z = 3.2 });
+            Console.Write(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sent message");
+
+        }
+
+        private void createAndSendUDP(String action)
+        {
+
+            System.Net.Sockets.Socket sock = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Dgram,ProtocolType.Udp);
+            // send shooting command to nerf gun
+            IPAddress serverAddr = IPAddress.Parse("192.168.1.142");
+      
+            IPEndPoint endPoint = new IPEndPoint(serverAddr, 4210);
+            string text = action;
+            byte[] send_buffer = Encoding.ASCII.GetBytes(text);
+            sock.SendTo(send_buffer, endPoint);
+            Console.Write("Sent to UDP value:"+action);
+
+        }
+
+        
+
+        private void writeToSerialPort(String action)
+        {
+
+            if (serialPort.IsOpen)
+            {
+                try
+                {
+                    // serialPort.Open();
+                    serialPort.Write(action);
+                    Console.WriteLine(">>>>>>>Written to port action:"+ action);
+
+                }
+                catch
+                {
+                    MessageBox.Show("There was an error. Please make sure that the correct port was selected, and the device, plugged in.");
+                }
+            }
+
         }
 
         private void Update()
         {
             Int32 facesDetected = 0;
-            Int32 faceH = 0;
+            /* Int32 faceH = 0;
             Int32 faceW = 0;
             Int32 faceX = 0;
             Int32 faceY = 0;
+            */
             float faceDepth = 0;
             String json = "";
 
@@ -176,7 +305,7 @@ namespace FaceTracking
                             // Get average depth value of detected face
                             faceDetectionData.QueryFaceAverageDepth(out faceDepth);
 
-                            Console.WriteLine(">>>>>>>Face detected");
+                            //Console.WriteLine(">>>>>>>Face detected");
                             
                          
 

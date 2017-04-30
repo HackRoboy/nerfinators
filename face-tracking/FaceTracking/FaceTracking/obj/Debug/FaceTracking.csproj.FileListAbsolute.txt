@@ -29,3 +29,5 @@ F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\Face
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.Properties.Resources.resources
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.csproj.GenerateResource.Cache
 F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\obj\Debug\FaceTracking.csprojResolveAssemblyReference.cache
+F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\bin\Debug\rosbridge_client_common.dll
+F:\hack roboy\nerfinators\face-tracking\FaceTracking\FaceTracking\bin\Debug\rosbridge_client_socket_for_desktop.dll

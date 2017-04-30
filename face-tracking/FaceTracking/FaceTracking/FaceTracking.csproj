@@ -41,6 +41,14 @@
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="rosbridge_client_common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\rosbridge.client.common.1.0.0\lib\portable45-net45+win8\rosbridge_client_common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="rosbridge_client_socket_for_desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\rosbridge.client.desktop.1.0.0\lib\net45\rosbridge_client_socket_for_desktop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
