@@ -62,6 +62,10 @@ void shootOnce() {
 
 void loop() {
 
+  // usb port test
+  if(Serial.available())
+    turnLED(Serial.parseInt());
+
   // ACCELERATOR ON
   digitalWrite(ACCELERATOR_PIN, HIGH);   // on
   delay(1000); // some delay
