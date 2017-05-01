@@ -2,6 +2,7 @@
 
 Servo myservo;  // create servo object to control a servo
 int ACCELERATOR_PIN = 12;
+int wifi_pin = 4;
 
 void setup() {
 
@@ -13,6 +14,7 @@ void setup() {
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(wifi_pin, INPUT);
   digitalWrite(LED_BUILTIN, HIGH);
   // accelerator pin
   pinMode(ACCELERATOR_PIN, OUTPUT);      // sets the digital pin as output
@@ -77,7 +79,7 @@ void readSerial() {
     if (dataChar == '\n') {
       int id = dataString.toInt();
       Serial.println("data: " + String(id));
-      
+
       switch(id){
         case 0:
           turnLED(id);
@@ -89,7 +91,7 @@ void readSerial() {
           shoot(3);
         break;
       }
-      
+
       return;
     } else {
       dataString += dataChar;
@@ -107,6 +109,11 @@ void demo1(){
 
 void loop() {
 
-  demo1();
+  //demo1();
   //readSerial();
+
+  int val = digitalRead(wifi_pin);
+  if(val == 1){
+    shoot(1);
+  }
 }
