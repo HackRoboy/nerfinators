@@ -51,13 +51,13 @@ void shootOnce() {
 
   // forward
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  keepSpeed(stopPos - offset, 50);
+  keepSpeed(stopPos - offset, 35);
   myservo.detach();
   delay(300);
 
   // back
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  keepSpeed(stopPos + offset, 50);
+  keepSpeed(stopPos + offset, 35);
   myservo.detach();
   delay(300);
 }
